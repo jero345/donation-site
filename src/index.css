@@ -1,3 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&display=swap');
+
+* {
+  font-family: 'Poppins', 'Roboto', sans-serif;
+}
+
+:root {
+  --azul-oscuro: #004990;
+  --verde-claro: #92C83E;
+  --verde-oscuro: #30793b;
+  --rojo-oscuro: #ae311a;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

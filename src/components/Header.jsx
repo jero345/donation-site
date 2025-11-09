@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
-    <header className="bg-[#D2483F] text-white py-3 sm:py-4 shadow-md">
+    <header className="text-white py-3 sm:py-4 shadow-md" style={{ backgroundColor: '#ae311a' }}>
       <div className="container mx-auto px-4 flex items-center justify-between">
-        {/* Logo más grande */}
+        {/* Logo */}
         <div className="flex items-center gap-2 sm:gap-3">
           <span className="text-xl sm:text-2xl">🎄</span>
           <img
@@ -16,19 +16,21 @@ const Header = () => {
           <span className="text-xl sm:text-2xl">⭐</span>
         </div>
 
-        {/* Menú de navegación con rutas */}
+        {/* Menú de navegación */}
         <nav className="flex items-center gap-4 sm:gap-6">
-          <Link to="/" className="text-white hover:text-[#F3ECE6] font-medium text-sm sm:text-base transition-colors">
+          <Link 
+            to="/" 
+            className="text-white hover:opacity-80 font-medium text-sm sm:text-base transition-all"
+            style={{ fontFamily: 'Poppins, sans-serif' }}
+          >
             INICIO
           </Link>
           <Link
             to="/donation"
-            className="bg-[#F39C2B] hover:bg-[#E68A20] text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-medium text-sm sm:text-base transition-all transform hover:scale-105 shadow-md"
+            className="text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full font-medium text-sm sm:text-base transition-all transform hover:scale-105 shadow-md hover:opacity-90"
+            style={{ backgroundColor: '#92C83E', fontFamily: 'Poppins, sans-serif' }}
           >
             💰 DONAR
-          </Link>
-          <Link to="/contacto" className="text-white hover:text-[#F3ECE6] font-medium text-sm sm:text-base transition-colors">
-            CONTACTO
           </Link>
         </nav>
       </div>
