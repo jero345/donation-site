@@ -6,6 +6,9 @@ const images_5_6 = import.meta.glob('/src/assets/carts/5-6/*.jpg', { eager: true
 const images_7_8 = import.meta.glob('/src/assets/carts/7-8/*.jpg', { eager: true });
 const images_9_10 = import.meta.glob('/src/assets/carts/9-10/*.jpg', { eager: true });
 
+// Importar el banner principal
+import bannerImage from '/src/assets/logo.png';
+
 const Carousel = () => {
   const [currentIndexes, setCurrentIndexes] = useState({ group1: 0, group2: 0, group3: 0 });
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,9 +17,23 @@ const Carousel = () => {
   const [showCart, setShowCart] = useState(false);
   const [donationAmount, setDonationAmount] = useState('90000');
   const [voluntaryDonation, setVoluntaryDonation] = useState('0');
+  const [donatedCards, setDonatedCards] = useState([]);
   const navigate = useNavigate();
 
   const MINIMUM_DONATION = 90000;
+
+  // ============= CARGAR CARTAS DONADAS DESDE LOCALSTORAGE =============
+  useEffect(() => {
+    const savedDonatedCards = localStorage.getItem('donatedCards');
+    if (savedDonatedCards) {
+      try {
+        setDonatedCards(JSON.parse(savedDonatedCards));
+      } catch (error) {
+        console.error('Error al cargar cartas donadas:', error);
+        localStorage.removeItem('donatedCards');
+      }
+    }
+  }, []);
 
   // ============= FUNCIONES DE PROCESAMIENTO DE IMÁGENES =============
   const getNameFromPath = (path) => {
@@ -27,7 +44,7 @@ const Carousel = () => {
   const processImages = (imageModules, age) => {
     return Object.keys(imageModules)
       .filter(path => /\.(jpg|JPG)$/i.test(path))
-      .map((path, index) => {
+      .map((path) => {
         const name = getNameFromPath(path);
         return {
           id: `${age}-${name}`,
@@ -41,10 +58,22 @@ const Carousel = () => {
       .sort((a, b) => a.name.localeCompare(b.name));
   };
 
-  const photoGroups = {
+  // Filtrar cartas que NO han sido donadas
+  const filterAvailableCards = (cards) => {
+    return cards.filter(card => !donatedCards.includes(card.id));
+  };
+
+  const allPhotoGroups = {
     group1: processImages(images_5_6, 6),
     group2: processImages(images_7_8, 8),
     group3: processImages(images_9_10, 10),
+  };
+
+  // Cartas disponibles (no donadas)
+  const photoGroups = {
+    group1: filterAvailableCards(allPhotoGroups.group1),
+    group2: filterAvailableCards(allPhotoGroups.group2),
+    group3: filterAvailableCards(allPhotoGroups.group3),
   };
 
   const totalPhotos = photoGroups.group1.length + photoGroups.group2.length + photoGroups.group3.length;
@@ -178,6 +207,14 @@ const Carousel = () => {
       return;
     }
     
+    // Guardar las cartas del carrito como donadas
+    const cartCardIds = cart.map(item => item.id);
+    const updatedDonatedCards = [...donatedCards, ...cartCardIds];
+    
+    // Guardar en localStorage
+    localStorage.setItem('donatedCards', JSON.stringify(updatedDonatedCards));
+    setDonatedCards(updatedDonatedCards);
+    
     const donationData = {
       cart: cart,
       cardsTotal: getTotalCardsPrice(),
@@ -186,7 +223,11 @@ const Carousel = () => {
       numberOfCards: cart.length
     };
     
+    // Limpiar el carrito
+    setCart([]);
     setShowCart(false);
+    
+    // Navegar a la página de donación
     navigate('/donation', { state: donationData });
   };
 
@@ -210,15 +251,25 @@ const Carousel = () => {
   if (totalPhotos === 0) {
     return (
       <div className="text-center p-8" style={{ color: '#ae311a', fontFamily: 'Poppins, sans-serif' }}>
-        ❌ No se encontraron imágenes en ./assets/carts/
-        <br />
-        <span className="text-sm">Verifica que existan las carpetas: 5-6/, 7-8/, 9-10/</span>
+        <p className="text-2xl mb-4">🎄 ¡Todas las cartas han sido donadas! 🎄</p>
+        <p className="text-lg">Gracias por tu generosidad esta Navidad</p>
+        <button
+          onClick={() => {
+            if (window.confirm('¿Deseas reiniciar las cartas disponibles? (Solo para desarrollo)')) {
+              localStorage.removeItem('donatedCards');
+              setDonatedCards([]);
+            }
+          }}
+          className="mt-4 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+        >
+          🔄 Reiniciar (Dev)
+        </button>
       </div>
     );
   }
 
   // ============= COMPONENTE DE CARRUSEL =============
-  const CarouselSection = ({ groupKey, title, subtitle, photos }) => {
+  const CarouselSection = ({ groupKey, title, photos }) => {
     if (photos.length === 0) return null;
 
     return (
@@ -230,12 +281,6 @@ const Carousel = () => {
           >
             {title}
           </h2>
-          <p 
-            className="text-sm sm:text-base md:text-lg font-medium"
-            style={{ color: '#30793b', fontFamily: 'Roboto, sans-serif' }}
-          >
-            {subtitle}
-          </p>
         </div>
 
         <div className="relative">
@@ -272,12 +317,6 @@ const Carousel = () => {
                   }}
                 >
                   <div className="relative">
-                    <div 
-                      className="absolute top-2 right-2 sm:top-3 sm:right-3 text-white px-2 sm:px-4 py-1 sm:py-2 rounded-full text-xs sm:text-base font-bold z-10 shadow-md"
-                      style={{ backgroundColor: '#ae311a', fontFamily: 'Poppins, sans-serif' }}
-                    >
-                      🎁 {photo.age} años
-                    </div>
                     <img
                       src={photo.src}
                       alt={photo.alt}
@@ -334,7 +373,42 @@ const Carousel = () => {
   // ============= RENDER PRINCIPAL =============
   return (
     <>
+      {/* === BANNER GRANDE EN LA PARTE SUPERIOR === */}
+      <div className="w-full mb-8 px-4 sm:px-6 lg:px-8">
+        <img
+          src={bannerImage}
+          alt="The Gift of Sharing"
+          className="w-full h-auto max-h-[300px] object-contain mx-auto"
+          style={{ 
+            filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
+            borderRadius: '8px'
+          }}
+        />
+      </div>
+
       <div className="relative max-w-6xl mx-auto mb-12 px-4 sm:px-6 lg:px-8">
+        {/* === TÍTULO PRINCIPAL Y SUBTÍTULO === */}
+        <div className="text-center mb-16">
+          <h1 
+            className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight"
+            style={{ 
+              color: '#ae311a', 
+              fontFamily: 'Poppins, sans-serif' 
+            }}
+          >
+            Porque los mejores regalos no son los que se empacan
+          </h1>
+          <p 
+            className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed"
+            style={{ 
+              color: '#30793b', 
+              fontFamily: 'Roboto, sans-serif' 
+            }}
+          >
+            Elige una carta y comparte con nosotros el regalo más grande: una Navidad vivida en comunidad.
+          </p>
+        </div>
+
         {/* Botón del carrito flotante */}
         {cart.length > 0 && (
           <button
@@ -355,22 +429,19 @@ const Carousel = () => {
         {/* Carruseles */}
         <CarouselSection
           groupKey="group1"
-          title="🎅 Niños de 5-6 años 🎄"
-          subtitle="Los más pequeñitos esperan tu ayuda"
+          title="🎅 Niños y Niñas de 5-6 años 🎄"
           photos={photoGroups.group1}
         />
 
         <CarouselSection
           groupKey="group2"
-          title="🎁 Niños de 7-8 años ⭐"
-          subtitle="Llenos de ilusión por la Navidad"
+          title="🎁 Niños y Niñas de 7-8 años ⭐"
           photos={photoGroups.group2}
         />
 
         <CarouselSection
           groupKey="group3"
-          title="✨ Niños de 9-10 años 🎄"
-          subtitle="Esperando hacer realidad sus sueños"
+          title="✨ Niños y Niñas de 9-10 años 🎄"
           photos={photoGroups.group3}
         />
       </div>
@@ -471,7 +542,7 @@ const Carousel = () => {
                         className="flex-1 bg-red-500 hover:bg-red-600 text-white px-4 py-3 rounded-full font-medium transition-all shadow-md"
                         style={{ fontFamily: 'Poppins, sans-serif' }}
                       >
-                        🗑️ Quitar
+                        🗑 Quitar
                       </button>
                       <button
                         onClick={handleAddToCart}
@@ -517,7 +588,7 @@ const Carousel = () => {
                 className="text-2xl sm:text-3xl font-bold mb-6 text-center"
                 style={{ color: '#ae311a', fontFamily: 'Poppins, sans-serif' }}
               >
-                🛒 Tu Carrito de Donaciones
+                🛒 Tu carrito de donaciones
               </h2>
 
               {cart.length === 0 ? (
@@ -562,7 +633,7 @@ const Carousel = () => {
                           className="text-red-500 hover:text-red-700 text-2xl transition-all hover:scale-110"
                           title="Eliminar"
                         >
-                          🗑️
+                          🗑
                         </button>
                       </div>
                     ))}
