@@ -40,7 +40,6 @@ const PaymentTable = () => {
       setDonations(formattedDonations);
       setError(null);
     } catch (err) {
-      console.error('Error al cargar donaciones:', err);
       setError(err.message);
     } finally {
       setLoading(false);

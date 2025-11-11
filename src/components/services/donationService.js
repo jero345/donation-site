@@ -23,14 +23,12 @@ export const donationService = {
 
       const data = await response.json();
       
-      console.log('📥 Donaciones obtenidas:', data);
       
       return {
         success: true,
         data: data.data || [], // Asume que los datos vienen en data.data
       };
     } catch (error) {
-      console.error('Error al obtener donaciones:', error);
       return {
         success: false,
         error: error.message || 'Error al obtener las donaciones',
@@ -60,15 +58,13 @@ export const donationService = {
       }
 
       const data = await response.json();
-      
-      console.log('📥 Respuesta del backend:', data);
+    
       
       return {
         success: true,
         data: data, // Devuelve toda la estructura tal como viene del backend
       };
     } catch (error) {
-      console.error('Error al crear donación:', error);
       return {
         success: false,
         error: error.message || 'Error al procesar la donación',

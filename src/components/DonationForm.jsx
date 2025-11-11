@@ -16,7 +16,6 @@ const DonationForm = () => {
   useEffect(() => {
     if (location.state) {
       setCartData(location.state);
-      console.log('Datos recibidos:', location.state);
     } else {
       // Redirigir si no hay datos del carrito
       navigate('/');
@@ -98,19 +97,15 @@ const DonationForm = () => {
 
       const donationData = donationService.formatDonationData(formData, cartData);
       
-      console.log('Enviando donación:', donationData);
 
       // Enviar a la API
       const response = await donationService.createDonation(donationData);
 
       if (response.success) {
-        console.log('✅ Donación creada exitosamente:', response.data);
         
         // El backend devuelve: response.data.data.reference
         const reference = response.data?.data?.reference || response.data?.reference;
         
-        console.log('📋 Referencia recibida:', reference);
-        console.log('📦 Response completo:', JSON.stringify(response, null, 2));
         
         if (!reference) {
           throw new Error('No se recibió la referencia del backend');
@@ -124,7 +119,6 @@ const DonationForm = () => {
       }
 
     } catch (error) {
-      console.error('❌ Error al procesar donación:', error);
       alert(`Error: ${error.message || 'No se pudo procesar la donación. Intenta nuevamente.'}`);
     } finally {
       setIsSubmitting(false);
@@ -134,10 +128,6 @@ const DonationForm = () => {
   // Función para abrir Wompi
   const openWompiCheckout = (reference) => {
     const totalEnCentavos = totalPagar * 100;
-    
-    console.log('🔗 Abriendo Wompi con referencia:', reference);
-    console.log('💰 Monto en centavos:', totalEnCentavos);
-    
     // Construir URL de Wompi con parámetros
     const wompiUrl = new URL('https://checkout.wompi.co/p/');
     wompiUrl.searchParams.append('public-key', 'pub_test_FPxYlP6NtsQE2ZRAbsygguBloNbIGU4t');
@@ -146,7 +136,7 @@ const DonationForm = () => {
     wompiUrl.searchParams.append('reference', reference);
     wompiUrl.searchParams.append('redirect-url', 'https://fundacionthecolumbusschool.com/?v=ab6c04006660');
     
-    console.log('🌐 URL Wompi:', wompiUrl.toString());
+
     
     // Redirigir a Wompi
     window.location.href = wompiUrl.toString();

@@ -8,7 +8,6 @@ export const donatedCardsStorage = {
       const stored = localStorage.getItem(STORAGE_KEY);
       return stored ? JSON.parse(stored) : [];
     } catch (error) {
-      console.error('Error al leer cartas donadas:', error);
       return [];
     }
   },
@@ -21,7 +20,6 @@ export const donatedCardsStorage = {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       return updated;
     } catch (error) {
-      console.error('Error al guardar cartas donadas:', error);
       return current;
     }
   },
@@ -38,7 +36,6 @@ export const donatedCardsStorage = {
       localStorage.removeItem(STORAGE_KEY);
       return true;
     } catch (error) {
-      console.error('Error al limpiar cartas donadas:', error);
       return false;
     }
   },
