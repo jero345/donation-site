@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-import Carousel from './components/Carousel';
+import Carousel from './components/carousel/Carousel';
 import DonationForm from './components/DonationForm';
 
 // Importar el logo de The Columbus School
