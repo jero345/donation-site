@@ -130,7 +130,7 @@ const DonationForm = () => {
     const totalEnCentavos = totalPagar * 100;
     // Construir URL de Wompi con parámetros
     const wompiUrl = new URL('https://checkout.wompi.co/p/');
-    wompiUrl.searchParams.append('public-key', 'pub_test_FPxYlP6NtsQE2ZRAbsygguBloNbIGU4t');
+    wompiUrl.searchParams.append('public-key', 'pub_prod_izvHROR3Ab3vRDitqXbgO37bnkWDzhqO');
     wompiUrl.searchParams.append('amount-in-cents', totalEnCentavos);
     wompiUrl.searchParams.append('currency', 'COP');
     wompiUrl.searchParams.append('reference', reference);
