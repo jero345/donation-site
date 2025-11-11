@@ -73,12 +73,6 @@ const CartModal = ({
                         {item.name}
                       </h4>
                       <p 
-                        className="text-sm text-gray-600"
-                        style={{ fontFamily: 'Roboto, sans-serif' }}
-                      >
-                        {item.age} años
-                      </p>
-                      <p 
                         className="font-bold text-lg"
                         style={{ color: '#30793b', fontFamily: 'Roboto, sans-serif' }}
                       >

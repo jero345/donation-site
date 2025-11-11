@@ -59,12 +59,6 @@ const CardModal = ({
               >
                 {selectedCard.name}
               </h3>
-              <p 
-                className="text-lg font-medium mb-4"
-                style={{ color: '#30793b', fontFamily: 'Roboto, sans-serif' }}
-              >
-                {selectedCard.age} años
-              </p>
 
               <div className="max-w-md mx-auto mb-4">
                 <label 

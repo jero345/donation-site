@@ -60,18 +60,6 @@ const PolicyCheckbox = ({ aceptaPolitica, setAceptaPolitica, errors }) => {
           {errors.aceptaPolitica}
         </p>
       )}
-
-      {/* Botón inferior */}
-      <div className="mt-2 text-center">
-        <button
-          type="button"
-          onClick={handlePolicyClick}
-          className="text-xs underline hover:opacity-80 transition-opacity"
-          style={{ color: '#30793b', fontFamily: 'Roboto, sans-serif' }}
-        >
-          📄 Ver Política de Protección de Datos completa
-        </button>
-      </div>
     </div>
   );
 };
