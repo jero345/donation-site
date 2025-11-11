@@ -15,7 +15,7 @@ const WompiSubmitButton = ({ totalEnCentavos, isFormValid, validateForm }) => {
       <input 
         type="hidden" 
         name="public-key" 
-        value="pub_test_FPxYlP6NtsQE2ZRAbsygguBloNbIGU4t" 
+        value="pub_prod_izvHROR3Ab3vRDitqXbgO37bnkWDzhqO" 
       />
 
       {/* Monto total en centavos */}

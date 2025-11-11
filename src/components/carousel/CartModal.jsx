@@ -183,7 +183,7 @@ const CartModal = ({
                 style={{ backgroundColor: '#004990', fontFamily: 'Poppins, sans-serif' }}
               >
                 <span>💳</span>
-                <span>Proceder al Pago</span>
+                <span>Proceder con la Donacion</span>
               </button>
             </>
           )}

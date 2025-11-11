@@ -7,9 +7,9 @@ import { useCart } from '../hooks/useCart';
 import { useCarousel } from '../hooks/useCarousel';
 import { processImages, filterAvailableCards } from '../utils/imageProcessing';
 import { MINIMUM_DONATION } from '../utils/priceFormatting';
+import { donatedCardsStorage } from '../utils/donatedCardsStorage';
 import bannerImage from '../../assets/logos/logo.png';
 
-// Importar imágenes
 const images_5_6 = import.meta.glob('/src/assets/carts/5-6/*.webp', { eager: true });
 const images_7_8 = import.meta.glob('/src/assets/carts/7-8/*.webp', { eager: true });
 const images_9_10 = import.meta.glob('/src/assets/carts/9-10/*.webp', { eager: true });
@@ -21,18 +21,21 @@ const Carousel = () => {
   const [donatedCards, setDonatedCards] = useState([]);
   const navigate = useNavigate();
 
-  // Custom hooks
   const cartHook = useCart();
   const carouselHook = useCarousel();
 
-  // Procesar imágenes
+  // Cargar cartas donadas desde localStorage al iniciar
+  useEffect(() => {
+    const storedDonatedCards = donatedCardsStorage.getDonatedCards();
+    setDonatedCards(storedDonatedCards);
+  }, []);
+
   const allPhotoGroups = {
     group1: processImages(images_5_6, 6),
     group2: processImages(images_7_8, 8),
     group3: processImages(images_9_10, 10),
   };
 
-  // Cartas disponibles (no donadas)
   const photoGroups = {
     group1: filterAvailableCards(allPhotoGroups.group1, donatedCards),
     group2: filterAvailableCards(allPhotoGroups.group2, donatedCards),
@@ -41,8 +44,12 @@ const Carousel = () => {
 
   const totalPhotos = photoGroups.group1.length + photoGroups.group2.length + photoGroups.group3.length;
 
-  // Funciones de modal
   const openModal = (photo) => {
+    // Verificar si la carta ya fue donada
+    if (donatedCardsStorage.isCardDonated(photo.id)) {
+      alert('🎄 Esta carta ya ha sido donada. ¡Gracias por tu interés!');
+      return;
+    }
     setSelectedCard(photo);
     setIsModalOpen(true);
   };
@@ -58,8 +65,10 @@ const Carousel = () => {
       return;
     }
     
+    // Guardar IDs de cartas en localStorage
     const cartCardIds = cartHook.cart.map(item => item.id);
-    setDonatedCards([...donatedCards, ...cartCardIds]);
+    const updatedDonatedCards = donatedCardsStorage.saveDonatedCards(cartCardIds);
+    setDonatedCards(updatedDonatedCards);
     
     const donationData = {
       cart: cartHook.cart,
@@ -75,12 +84,14 @@ const Carousel = () => {
   };
 
   const handleResetDonatedCards = () => {
-    setDonatedCards([]);
-    carouselHook.setCurrentIndexes({ group1: 0, group2: 0, group3: 0 });
-    alert('✅ Todas las cartas han sido restauradas');
+    if (window.confirm('⚠️ ¿Estás seguro de restaurar todas las cartas? Esta acción no se puede deshacer.')) {
+      donatedCardsStorage.clearDonatedCards();
+      setDonatedCards([]);
+      carouselHook.setCurrentIndexes({ group1: 0, group2: 0, group3: 0 });
+      alert('✅ Todas las cartas han sido restauradas');
+    }
   };
 
-  // Manejo de tecla Escape
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
@@ -96,7 +107,6 @@ const Carousel = () => {
     };
   }, [isModalOpen, showCart]);
 
-  // Si no hay cartas disponibles
   if (totalPhotos === 0) {
     return (
       <div className="text-center p-8" style={{ color: '#ae311a', fontFamily: 'Poppins, sans-serif' }}>
@@ -106,7 +116,7 @@ const Carousel = () => {
           onClick={handleResetDonatedCards}
           className="mt-4 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-medium"
         >
-          🔄 Reiniciar cartas
+          🔄 Reiniciar cartas (Solo Admin)
         </button>
       </div>
     );
@@ -114,13 +124,12 @@ const Carousel = () => {
 
   return (
     <>
-      {/* Banner */}
       <div className="w-full mb-8 px-4 sm:px-6 lg:px-8">
         <img
           src={bannerImage}
           alt="The Gift of Sharing"
           className="w-full h-auto max-h-[300px] object-contain mx-auto"
-        style={{ 
+          style={{ 
             filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
             borderRadius: '8px'
           }}
@@ -128,42 +137,38 @@ const Carousel = () => {
       </div>
 
       <div className="relative max-w-6xl mx-auto mb-12 px-4 sm:px-6 lg:px-8">
-        {/* Título principal */}
         <div className="text-center mb-16">
           <h1 
             className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 leading-tight"
-            style={{ 
-              color: '#ae311a', 
-              fontFamily: 'Poppins, sans-serif' 
-            }}
+            style={{ color: '#ae311a', fontFamily: 'Poppins, sans-serif' }}
           >
             Porque los mejores regalos no son los que se empacan
           </h1>
           <p 
             className="text-lg sm:text-xl md:text-2xl max-w-3xl mx-auto leading-relaxed"
-            style={{ 
-              color: '#30793b', 
-              fontFamily: 'Roboto, sans-serif' 
-            }}
+            style={{ color: '#30793b', fontFamily: 'Roboto, sans-serif' }}
           >
             Elige una carta y comparte con nosotros el regalo más grande: una Navidad vivida en comunidad.
           </p>
         </div>
 
-        {/* Botón de reset para desarrollo */}
+        {/* Botones de desarrollo - comentados para producción
         {donatedCards.length > 0 && (
-          <div className="fixed top-4 right-4 z-50">
+          <div className="fixed top-4 right-4 z-50 flex gap-2">
+            <div className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium">
+              🎁 {donatedCards.length} donadas
+            </div>
             <button
               onClick={handleResetDonatedCards}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all text-sm font-medium flex items-center gap-2"
-              title="Reiniciar cartas donadas (solo desarrollo)"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all text-sm font-medium"
+              title="Reiniciar cartas donadas"
             >
-              🔄 Reset ({donatedCards.length})
+              🔄 Reset
             </button>
           </div>
         )}
+        */}
 
-        {/* Botón del carrito flotante */}
         {cartHook.cart.length > 0 && (
           <button
             onClick={() => setShowCart(true)}
@@ -180,7 +185,6 @@ const Carousel = () => {
           </button>
         )}
 
-        {/* Carruseles */}
         <CarouselSection
           groupKey="group1"
           title="🎅 Niños y Niñas de 5-6 años 🎄"
@@ -193,6 +197,7 @@ const Carousel = () => {
           onOpenModal={openModal}
           isInCart={cartHook.isInCart}
           getCartItem={cartHook.getCartItem}
+          donatedCards={donatedCards}
         />
 
         <CarouselSection
@@ -207,6 +212,7 @@ const Carousel = () => {
           onOpenModal={openModal}
           isInCart={cartHook.isInCart}
           getCartItem={cartHook.getCartItem}
+          donatedCards={donatedCards}
         />
 
         <CarouselSection
@@ -221,10 +227,10 @@ const Carousel = () => {
           onOpenModal={openModal}
           isInCart={cartHook.isInCart}
           getCartItem={cartHook.getCartItem}
+          donatedCards={donatedCards}
         />
       </div>
 
-      {/* Modal de carta individual */}
       <CardModal
         selectedCard={selectedCard}
         isOpen={isModalOpen}
@@ -239,7 +245,6 @@ const Carousel = () => {
         }
       />
 
-      {/* Modal del carrito */}
       <CartModal
         isOpen={showCart}
         onClose={() => setShowCart(false)}

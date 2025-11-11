@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Carousel from './components/carousel/Carousel';
 import DonationForm from './components/DonationForm';
+import PaymentTable from './components/PaymentTable';
 
 // Importar el logo de The Columbus School
 import logoColumbus from './assets/logos/logo-columbus.png';
@@ -11,6 +12,7 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50 relative overflow-hidden flex flex-col" style={{ fontFamily: 'Poppins, Roboto, sans-serif' }}>
+        
         {/* Decoración navideña de fondo */}
         <div className="fixed inset-0 pointer-events-none opacity-10">
           <div className="absolute top-10 left-10 text-5xl animate-bounce" style={{ color: '#30793b' }}>❄</div>
@@ -27,13 +29,14 @@ function App() {
           <Routes>
             <Route path="/" element={<Carousel />} />
             <Route path="/donation" element={<DonationForm />} />
+            <Route path="/payments" element={<PaymentTable />} />
           </Routes>
         </main>
 
         {/* Footer Fundación TCS */}
         <footer className="relative z-10 text-white py-12" style={{ background: 'linear-gradient(to right,  #004990)' }}>
           <div className="max-w-6xl mx-auto px-6">
-            {/* Contenido principal del footer */}
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
               
               {/* Sección 1: Información de contacto */}
@@ -102,11 +105,9 @@ function App() {
               </div>
             </div>
 
-            {/* Línea divisoria + Logo a la izquierda + Texto centrado */}
             <div className="pt-6" style={{ borderTop: '1px solid rgba(146, 200, 62, 0.3)' }}>
               <div className="flex items-center justify-between gap-4">
                 
-                {/* Logo The Columbus School - Izquierda */}
                 <div className="flex-shrink-0">
                   <img
                     src={logoColumbus}
@@ -115,7 +116,6 @@ function App() {
                   />
                 </div>
 
-                {/* Texto de copyright + mensaje inspirador - Centrado */}
                 <div className="flex-1 text-center" style={{ fontFamily: 'Roboto, sans-serif' }}>
                   <p className="text-sm">
                     © {new Date().getFullYear()} Fundación TCS – Todos los derechos reservados
@@ -125,7 +125,6 @@ function App() {
                   </p>
                 </div>
 
-                {/* Espacio vacío a la derecha (opcional) */}
                 <div className="w-10 sm:w-20"></div>
 
               </div>
