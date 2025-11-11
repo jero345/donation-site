@@ -74,12 +74,16 @@ const DonationForm = () => {
   };
 
   const handleSubmit = async () => {
+    console.log('🚀 Iniciando proceso de donación...');
+    
     // Validar formulario
     if (!validateForm()) {
+      console.log('❌ Validación fallida');
       alert('⚠️ Por favor completa todos los campos obligatorios');
       return;
     }
 
+    console.log('✅ Validación exitosa');
     setIsSubmitting(true);
 
     try {
@@ -95,39 +99,70 @@ const DonationForm = () => {
         childrenGrades: childrenGrades.filter(g => g.trim()),
       };
 
+      console.log('📝 Datos del formulario:', formData);
+      console.log('🛒 Datos del carrito:', cartData);
+
       const donationData = donationService.formatDonationData(formData, cartData);
-      
+      console.log('📦 Datos formateados para enviar:', donationData);
 
       // Enviar a la API
+      console.log('🌐 Enviando petición al backend...');
       const response = await donationService.createDonation(donationData);
+      
+      console.log('📦 Respuesta completa del backend:', response);
+      console.log('✅ response.success:', response.success);
+      console.log('📄 response.data:', response.data);
 
       if (response.success) {
+        // Buscar referencia en múltiples ubicaciones
+        console.log('🔍 Buscando referencia...');
+        console.log('   response.reference:', response.reference);
+        console.log('   response.data?.data?.reference:', response.data?.data?.reference);
+        console.log('   response.data?.reference:', response.data?.reference);
+        console.log('   response.data?.data?.id:', response.data?.data?.id);
+        console.log('   response.data?.id:', response.data?.id);
         
-        // El backend devuelve: response.data.data.reference
-        const reference = response.data?.data?.reference || response.data?.reference;
+        const reference = response.reference || 
+                         response.data?.data?.reference || 
+                         response.data?.reference;
         
+        console.log('🎯 Referencia final extraída:', reference);
         
         if (!reference) {
-          throw new Error('No se recibió la referencia del backend');
+          console.error('❌ ERROR: No se encontró la referencia en ninguna ubicación');
+          console.error('Estructura completa de response:', JSON.stringify(response, null, 2));
+          throw new Error('No se recibió la referencia del backend. Por favor contacta al equipo técnico.');
         }
         
+        console.log('✅ Referencia válida, abriendo Wompi con:', reference);
         // Abrir pasarela de Wompi automáticamente
         openWompiCheckout(reference);
         
       } else {
-        throw new Error(response.error);
+        console.error('❌ response.success es false');
+        console.error('Error del backend:', response.error);
+        throw new Error(response.error || 'Error desconocido del servidor');
       }
 
     } catch (error) {
+      console.error('💥 Error en handleSubmit:', error);
+      console.error('Detalles del error:', error.message);
       alert(`Error: ${error.message || 'No se pudo procesar la donación. Intenta nuevamente.'}`);
     } finally {
       setIsSubmitting(false);
+      console.log('🏁 Proceso finalizado');
     }
   };
 
   // Función para abrir Wompi
   const openWompiCheckout = (reference) => {
+    console.log('💳 Preparando URL de Wompi...');
+    console.log('   Referencia:', reference);
+    console.log('   Total a pagar:', totalPagar);
+    
     const totalEnCentavos = totalPagar * 100;
+    console.log('   Total en centavos:', totalEnCentavos);
+    
     // Construir URL de Wompi con parámetros
     const wompiUrl = new URL('https://checkout.wompi.co/p/');
     wompiUrl.searchParams.append('public-key', 'pub_prod_izvHROR3Ab3vRDitqXbgO37bnkWDzhqO');
@@ -136,9 +171,10 @@ const DonationForm = () => {
     wompiUrl.searchParams.append('reference', reference);
     wompiUrl.searchParams.append('redirect-url', 'https://fundacionthecolumbusschool.com/?v=ab6c04006660');
     
-
+    console.log('🔗 URL de Wompi construida:', wompiUrl.toString());
     
     // Redirigir a Wompi
+    console.log('↗️ Redirigiendo a Wompi...');
     window.location.href = wompiUrl.toString();
   };
 
