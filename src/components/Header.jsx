@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logoColumbus from '../assets/logos/logo-columbus.png';
 
 const Header = () => {
   return (
@@ -7,15 +8,13 @@ const Header = () => {
       <div className="container mx-auto px-4 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-2 sm:gap-3">
-      
           <img
-            src="/src/assets/ee.png"
-            alt="The Gift of Sharing"
+            src={logoColumbus}
+            alt="Columbus School Logo"
             className="h-10 sm:h-12 md:h-16 w-auto object-contain"
           />
-        
         </div>
-
+        
         {/* Menú de navegación */}
         <nav className="flex items-center gap-4 sm:gap-6">
           <Link 

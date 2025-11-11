@@ -7,12 +7,12 @@ import { useCart } from '../hooks/useCart';
 import { useCarousel } from '../hooks/useCarousel';
 import { processImages, filterAvailableCards } from '../utils/imageProcessing';
 import { MINIMUM_DONATION } from '../utils/priceFormatting';
-import bannerImage from '/src/assets/logo.png';
+import bannerImage from '../../assets/logos/logo.png';
 
 // Importar imágenes
-const images_5_6 = import.meta.glob('/src/assets/carts/5-6/*.jpg', { eager: true });
-const images_7_8 = import.meta.glob('/src/assets/carts/7-8/*.jpg', { eager: true });
-const images_9_10 = import.meta.glob('/src/assets/carts/9-10/*.jpg', { eager: true });
+const images_5_6 = import.meta.glob('/src/assets/carts/5-6/*.webp', { eager: true });
+const images_7_8 = import.meta.glob('/src/assets/carts/7-8/*.webp', { eager: true });
+const images_9_10 = import.meta.glob('/src/assets/carts/9-10/*.webp', { eager: true });
 
 const Carousel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);

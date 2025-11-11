@@ -5,7 +5,7 @@ import Carousel from './components/carousel/Carousel';
 import DonationForm from './components/DonationForm';
 
 // Importar el logo de The Columbus School
-import logoColumbus from '/src/assets/ee.png';
+import logoColumbus from './assets/logos/logo-columbus.png';
 
 function App() {
   return (

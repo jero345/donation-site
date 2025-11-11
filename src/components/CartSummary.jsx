@@ -42,12 +42,6 @@ const CartSummary = ({ cartData }) => {
                 >
                   {item.name}
                 </p>
-                <p 
-                  className="text-sm text-gray-600"
-                  style={{ fontFamily: 'Roboto, sans-serif' }}
-                >
-                  {item.age} años
-                </p>
               </div>
             </div>
             <p 

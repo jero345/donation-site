@@ -1,11 +1,11 @@
 export const getNameFromPath = (path) => {
   const fileName = path.split('/').pop();
-  return fileName.replace('.jpg', '').replace('.JPG', '');
+  return fileName.replace('.webp', '').replace('.webp', '');
 };
 
 export const processImages = (imageModules, age) => {
   return Object.keys(imageModules)
-    .filter(path => /\.(jpg|JPG)$/i.test(path))
+    .filter(path => /\.(webp|webp)$/i.test(path))
     .map((path) => {
       const name = getNameFromPath(path);
       return {
