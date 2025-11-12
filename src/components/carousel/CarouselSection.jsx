@@ -1,6 +1,6 @@
+// components/carousel/CarouselSection.jsx
 import React from 'react';
 import { formatPrice } from '../utils/priceFormatting';
-import { isCardAvailable } from '../utils/cardsStateManager';
 
 const CarouselSection = ({ 
   groupKey, 
@@ -39,34 +39,35 @@ const CarouselSection = ({
 
         <div className="flex gap-3 sm:gap-6 justify-center overflow-x-auto pb-4 pt-4 sm:pt-6">
           {getVisiblePhotos(photos, groupKey).map((photo, index) => {
-            const isAvailable = isCardAvailable(photo.id);
+            // 🔥 Usar el campo "donated" directamente del backend
+            const isAvailable = !photo.donated;
             const inCart = isInCart(photo.id);
             
             return (
               <div
-                key={`${photo.name}-${index}`}
+                key={`${photo.id}-${index}`}
                 onClick={() => onOpenModal(photo)}
                 className={`transition-all duration-500 transform ${
                   index === 1 ? 'scale-105 sm:scale-110 z-10' : 'scale-90 opacity-75'
                 } relative ${isAvailable ? 'cursor-pointer' : 'cursor-not-allowed'}`}
               >
+                {/* 🔥 Badge de "YA DONADA" */}
+                {!isAvailable && (
+                  <div 
+                    className="absolute -top-2 -right-2 text-white rounded-full px-3 py-1 flex items-center justify-center z-30 shadow-lg text-xs font-bold animate-pulse"
+                    style={{ backgroundColor: '#ae311a', fontFamily: 'Poppins, sans-serif' }}
+                  >
+                    ❌ DONADA
+                  </div>
+                )}
+                
                 {/* 🔥 Badge de "En carrito" */}
-                {inCart && isAvailable && (
+                {isAvailable && inCart && (
                   <div 
                     className="absolute -top-2 -right-2 text-white rounded-full w-8 h-8 flex items-center justify-center z-20 shadow-lg"
                     style={{ backgroundColor: '#92C83E' }}
                   >
                     ✓
-                  </div>
-                )}
-                
-                {/* 🔥 Badge de "YA DONADA" */}
-                {!isAvailable && (
-                  <div 
-                    className="absolute -top-2 -right-2 text-white rounded-full px-3 py-1 flex items-center justify-center z-20 shadow-lg text-xs font-bold"
-                    style={{ backgroundColor: '#ae311a', fontFamily: 'Poppins, sans-serif' }}
-                  >
-                    ❌ DONADA
                   </div>
                 )}
                 
@@ -76,7 +77,6 @@ const CarouselSection = ({
                     borderColor: inCart && isAvailable ? '#92C83E' : '#e5e7eb'
                   }}
                 >
-                  {/* 🔥 Contenedor de la imagen con overlay si está donada */}
                   <div className="relative">
                     <img
                       src={photo.src}
@@ -117,7 +117,6 @@ const CarouselSection = ({
                         {photo.name}
                       </h3>
                       
-                      {/* Mostrar precio si está en el carrito */}
                       {inCart && isAvailable && (
                         <p 
                           className="text-sm sm:text-lg font-bold"
@@ -127,7 +126,6 @@ const CarouselSection = ({
                         </p>
                       )}
                       
-                      {/* Mostrar estado si está donada */}
                       {!isAvailable && (
                         <p 
                           className="text-xs sm:text-sm font-bold text-red-400"

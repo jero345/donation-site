@@ -6,7 +6,6 @@ import PersonalInfoSection from './PersonalInfoSection';
 import ChildrenInfoSection from './ChildrenInfoSection';
 import PolicyCheckbox from './PolicyCheckbox';
 import { donationService } from './services/donationService';
-import { markCardsAsDonated, validateCartAvailability } from './utils/cardsStateManager';
 
 const DonationForm = () => {
   const location = useLocation();
@@ -18,12 +17,10 @@ const DonationForm = () => {
     if (location.state) {
       setCartData(location.state);
     } else {
-      // Redirigir si no hay datos del carrito
       navigate('/');
     }
   }, [location.state, navigate]);
 
-  // Estados del formulario
   const [name, setName] = useState('');
   const [id_type, setIdType] = useState('');
   const [id_number, setIdNumber] = useState('');
@@ -59,7 +56,6 @@ const DonationForm = () => {
       newErrors.aceptaPolitica = 'Debes aceptar la política de tratamiento de datos';
     }
 
-    // Validación hijos
     if (childrenNames.length > 0 || childrenGrades.length > 0) {
       for (let i = 0; i < Math.max(childrenNames.length, childrenGrades.length); i++) {
         const nombre = childrenNames[i] || '';
@@ -77,48 +73,18 @@ const DonationForm = () => {
   const handleSubmit = async () => {
     console.log('🚀 Iniciando proceso de donación...');
     
-    // 1️⃣ Validar formulario
     if (!validateForm()) {
-      console.log('❌ Validación fallida');
       alert('⚠️ Por favor completa todos los campos obligatorios');
       return;
     }
 
-    console.log('✅ Validación exitosa');
-    
-    // 🔥 2️⃣ VALIDAR DISPONIBILIDAD DE CARTAS ANTES DE TODO
-    const cardIds = cartData.cardIds || cartData.cart.map(item => item.id);
-    console.log('🎴 Validando disponibilidad de cartas:', cardIds);
-    
-    const validation = validateCartAvailability(cardIds);
-    
-    if (!validation.isValid) {
-      console.error('❌ Cartas no disponibles:', validation.unavailableCards);
-      
-      const unavailableNames = cartData.cart
-        .filter(item => validation.unavailableCards.includes(item.id))
-        .map(item => item.name)
-        .join(', ');
-      
-      alert(
-        `⚠️ Lo sentimos, algunas cartas ya no están disponibles:\n\n` +
-        `${unavailableNames}\n\n` +
-        `Por favor, regresa y selecciona otras cartas.`
-      );
-      
-      // Redirigir al home para que actualice
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 2000);
-      
-      return;
-    }
-    
-    console.log('✅ Todas las cartas están disponibles');
     setIsSubmitting(true);
-
+    
     try {
-      // Preparar datos para enviar
+      // 🔥 Los IDs del carrito YA SON UUIDs del backend
+      const cardUuids = cartData.cart.map(item => item.id);
+      console.log('✅ UUIDs del carrito:', cardUuids);
+      
       const formData = {
         name,
         id_type,
@@ -130,120 +96,66 @@ const DonationForm = () => {
         childrenGrades: childrenGrades.filter(g => g.trim()),
       };
 
-      console.log('📝 Datos del formulario:', formData);
-      console.log('🛒 Datos del carrito:', cartData);
-
       const donationData = donationService.formatDonationData(formData, cartData);
-      console.log('📦 Datos formateados para enviar:', donationData);
+      
+      // 🔥 Agregar UUIDs directamente
+      donationData.card_ids = cardUuids;
+      donationData.cards = cartData.cart.map(item => ({
+        id: item.id, // UUID del backend
+        name: item.name,
+        ref: item.ref
+      }));
+      
+      console.log('📦 Enviando:', donationData);
 
-      // 3️⃣ Enviar a la API
-      console.log('🌐 Enviando petición al backend...');
       const response = await donationService.createDonation(donationData);
       
-      console.log('📦 Respuesta completa del backend:', response);
-
       if (response.success) {
-        // Buscar referencia
         const reference = response.reference || 
                          response.data?.data?.reference || 
                          response.data?.reference;
         
-        console.log('🎯 Referencia extraída:', reference);
-        
         if (!reference) {
-          console.error('❌ ERROR: No se encontró la referencia');
-          throw new Error('No se recibió la referencia del backend. Por favor contacta al equipo técnico.');
+          throw new Error('No se recibió la referencia del backend.');
         }
         
-        // 🔥 4️⃣ MARCAR CARTAS COMO DONADAS **INMEDIATAMENTE**
-        console.log('🔒 Bloqueando cartas inmediatamente...');
-        
-        const markResult = markCardsAsDonated(cardIds);
-        
-        if (!markResult.success) {
-          console.error('❌ Error al marcar cartas:', markResult.error);
-          alert('⚠️ Error al procesar la donación. Algunas cartas ya no están disponibles.');
-          
-          // Redirigir al home
-          setTimeout(() => {
-            window.location.href = '/';
-          }, 2000);
-          
-          return;
-        }
-        
-        console.log('✅ Resultado de marcar cartas:', markResult);
-        
-        // 🔥 5️⃣ LIMPIAR CARRITO DEL LOCALSTORAGE
         localStorage.removeItem('shoppingCart');
-        console.log('🗑️ Carrito limpiado del localStorage');
         
-        // 🔥 6️⃣ ABRIR WOMPI EN NUEVA PESTAÑA
-        console.log('💳 Abriendo Wompi en nueva pestaña...');
         openWompiCheckout(reference);
         
-        // 🔥 7️⃣ MOSTRAR MENSAJE DE ÉXITO
         alert(
           '✅ ¡Gracias por tu generosidad!\n\n' +
-          '🎄 Las cartas han sido reservadas para ti.\n\n' +
-          '💳 Se abrió la pasarela de pago en una nueva ventana.\n\n' +
-          'Serás redirigido al inicio...'
+          '🎄 Las cartas han sido reservadas.\n\n' +
+          '💳 Se abrió la pasarela de pago.'
         );
         
-        // 🔥 8️⃣ REDIRIGIR AL HOME CON RECARGA COMPLETA
-        console.log('↗️ Redirigiendo al home con recarga...');
-        
-        // Esperar 1.5 segundos para que el usuario lea el mensaje
         setTimeout(() => {
-          window.location.href = '/'; // 🔥 Recarga completa
+          window.location.href = '/';
         }, 1500);
         
       } else {
-        console.error('❌ response.success es false');
-        throw new Error(response.error || 'Error desconocido del servidor');
+        throw new Error(response.error || 'Error del servidor');
       }
 
     } catch (error) {
-      console.error('💥 Error en handleSubmit:', error);
-      alert(`❌ Error: ${error.message || 'No se pudo procesar la donación. Intenta nuevamente.'}`);
+      console.error('💥 Error:', error);
+      alert(`❌ Error: ${error.message}`);
       
     } finally {
       setIsSubmitting(false);
-      console.log('🏁 Proceso finalizado');
     }
   };
 
-  // Función para abrir Wompi EN NUEVA PESTAÑA
   const openWompiCheckout = (reference) => {
-    console.log('💳 Preparando URL de Wompi...');
-    console.log('   Referencia:', reference);
-    console.log('   Total a pagar:', totalPagar);
-    
     const totalEnCentavos = totalPagar * 100;
-    console.log('   Total en centavos:', totalEnCentavos);
     
-    // Construir URL de Wompi con parámetros
     const wompiUrl = new URL('https://checkout.wompi.co/p/');
-    wompiUrl.searchParams.append('public-key', 'pub_test_FPxYlP6NtsQE2ZRAbsygguBloNbIGU4t');
+    wompiUrl.searchParams.append('public-key', 'pub_prod_izvHROR3Ab3vRDitqXbgO37bnkWDzhqO');
     wompiUrl.searchParams.append('amount-in-cents', totalEnCentavos);
     wompiUrl.searchParams.append('currency', 'COP');
     wompiUrl.searchParams.append('reference', reference);
     
-    console.log('🔗 URL de Wompi construida:', wompiUrl.toString());
-    
-    // 🔥 Abrir en NUEVA PESTAÑA
-    console.log('↗️ Abriendo Wompi en nueva pestaña...');
-    const wompiWindow = window.open(wompiUrl.toString(), '_blank');
-    
-    // Verificar si se bloqueó el popup
-    if (!wompiWindow || wompiWindow.closed || typeof wompiWindow.closed === 'undefined') {
-      console.warn('⚠️ Popup bloqueado, mostrando enlace manual');
-      alert(
-        '⚠️ Por favor, permite ventanas emergentes para continuar.\n\n' +
-        'O copia este enlace para completar el pago:\n\n' +
-        wompiUrl.toString()
-      );
-    }
+    window.open(wompiUrl.toString(), '_blank');
   };
 
   const totalPagar = cartData?.totalPrice || 0;
@@ -275,12 +187,10 @@ const DonationForm = () => {
       }}
     >
       <div className="max-w-3xl mx-auto">
-        {/* Resumen del carrito */}
         <CartSummary cartData={cartData} />
 
         <div className="bg-white rounded-3xl shadow-xl overflow-hidden border-4 border-gray-200">
 
-          {/* Header */}
           <div 
             className="text-white p-6 text-center"
             style={{ background: 'linear-gradient(135deg, #30793b)' }}
@@ -306,7 +216,6 @@ const DonationForm = () => {
 
           <div className="p-8">
 
-            {/* Información Personal */}
             <PersonalInfoSection
               nombreCompleto={name}
               setNombreCompleto={setName}
@@ -323,7 +232,6 @@ const DonationForm = () => {
               errors={errors}
             />
 
-            {/* Información Hijos */}
             <ChildrenInfoSection
               numberOfCards={cartData?.numberOfCards}
               nombreHijoTCS={childrenNames}
@@ -333,14 +241,12 @@ const DonationForm = () => {
               errors={errors}
             />
 
-            {/* Política */}
             <PolicyCheckbox
               aceptaPolitica={aceptaPolitica}
               setAceptaPolitica={setAceptaPolitica}
               errors={errors}
             />
 
-            {/* Total */}
             {cartData && cartData.totalPrice > 0 && (
               <div 
                 className="text-white p-6 rounded-2xl mb-6 text-center shadow-lg"
@@ -353,7 +259,6 @@ const DonationForm = () => {
               </div>
             )}
 
-            {/* Botón de envío */}
             <button
               onClick={handleSubmit}
               disabled={!isFormValid || isSubmitting}
@@ -370,7 +275,7 @@ const DonationForm = () => {
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                   </svg>
-                  Procesando y bloqueando cartas...
+                  Procesando donación...
                 </span>
               ) : (
                 '🎅 Dona ahora y regala sonrisas 🎄'

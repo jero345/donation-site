@@ -139,6 +139,13 @@
     "categoria": "5-6",
     "state": true
   },
+   {
+    "id": "5-6-emilio-ramirez",
+    "url": "/src/assets/carts/5-6/Emilio ramírez.webp",
+    "nombre": "Emilio ramírez",
+    "categoria": "5-6",
+    "state": true
+  },
   {
     "id": "5-6-salvador-soto",
     "url": "/src/assets/carts/5-6/Salvador Soto.webp",
@@ -169,6 +176,13 @@
   },
   {
     "id": "7-8-amelia-moreno",
+    "url": "/src/assets/carts/7-8/Amelia Moreno.webp",
+    "nombre": "Amelia Moreno",
+    "categoria": "7-8",
+    "state": true
+  },
+   {
+    "id": "7-8-",
     "url": "/src/assets/carts/7-8/Amelia Moreno.webp",
     "nombre": "Amelia Moreno",
     "categoria": "7-8",

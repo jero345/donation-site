@@ -6,67 +6,115 @@ import CardModal from './CardModal';
 import CartModal from './CartModal';
 import { useCart } from '../hooks/useCart';
 import { useCarousel } from '../hooks/useCarousel';
-import { processImages } from '../utils/imageProcessing';
 import { MINIMUM_DONATION } from '../utils/priceFormatting';
 import { 
-  isCardAvailable, 
   getStats, 
   resetAllCards,
   subscribeToCardsStateChanges,
-  validateCartAvailability 
+  validateCartAvailability,
 } from '../utils/cardsStateManager';
+import { cardsService } from '../services/cardService';
 import bannerImage from '../../assets/logos/logo.png';
-
-const images_5_6 = import.meta.glob('/src/assets/carts/5-6/*.webp', { eager: true });
-const images_7_8 = import.meta.glob('/src/assets/carts/7-8/*.webp', { eager: true });
-const images_9_10 = import.meta.glob('/src/assets/carts/9-10/*.webp', { eager: true });
 
 const Carousel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [showCart, setShowCart] = useState(false);
-  const [refreshKey, setRefreshKey] = useState(0); // 🔥 Para forzar re-render
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [photoGroups, setPhotoGroups] = useState({
+    group1: [],
+    group2: [],
+    group3: [],
+  });
   const navigate = useNavigate();
 
   const cartHook = useCart();
   const carouselHook = useCarousel();
 
-  // 🔥 Suscribirse a cambios en el estado de las cartas
+  // 🔥 CARGAR CARTAS DESDE EL BACKEND
   useEffect(() => {
-    console.log('📡 Suscribiéndose a cambios en cartas...');
+    console.log('🔄 Cargando cartas desde el backend...');
     
-    const unsubscribe = subscribeToCardsStateChanges((newState) => {
-      console.log('🔄 Estado de cartas cambió:', newState);
-      setRefreshKey(prev => prev + 1); // Forzar re-render
+    const loadCardsFromBackend = async () => {
+      try {
+        setIsLoading(true);
+        
+        // Obtener todas las cartas del backend
+        const result = await cardsService.getAllCards();
+        
+        if (!result.success) {
+          throw new Error('No se pudieron cargar las cartas');
+        }
+        
+        console.log('📦 Cartas del backend:', result.cards);
+        
+        // Agrupar por categoría
+        const groups = {
+          group1: [], // 5-6 años
+          group2: [], // 7-8 años
+          group3: [], // 9-10 años
+        };
+        
+        result.cards.forEach(card => {
+          // Determinar el grupo según la categoría
+          let groupKey = null;
+          
+          if (card.ref.startsWith('5-6-') || card.ref.startsWith('6-5-')) {
+            groupKey = 'group1';
+          } else if (card.ref.startsWith('7-8-') || card.ref.startsWith('8-7-')) {
+            groupKey = 'group2';
+          } else if (card.ref.startsWith('9-10-') || card.ref.startsWith('10-9-')) {
+            groupKey = 'group3';
+          }
+          
+          if (groupKey) {
+            groups[groupKey].push({
+              id: card.id, // ✅ UUID del backend
+              ref: card.ref, // ✅ Ref del backend
+              name: card.name, // ✅ Nombre del backend
+              src: card.url, // ✅ URL de la imagen
+              alt: card.name,
+              donated: card.donated, // ✅ Estado de donación
+              category: card.ref.split('-').slice(0, 2).join('-'), // "5-6", "7-8", etc.
+            });
+          }
+        });
+        
+        // Ordenar alfabéticamente
+        Object.keys(groups).forEach(key => {
+          groups[key].sort((a, b) => a.name.localeCompare(b.name));
+        });
+        
+        console.log('📊 Cartas agrupadas:');
+        console.log('   Grupo 5-6:', groups.group1.length);
+        console.log('   Grupo 7-8:', groups.group2.length);
+        console.log('   Grupo 9-10:', groups.group3.length);
+        
+        setPhotoGroups(groups);
+        setIsLoading(false);
+        
+      } catch (error) {
+        console.error('❌ Error cargando cartas:', error);
+        setIsLoading(false);
+      }
+    };
+    
+    loadCardsFromBackend();
+  }, [refreshKey]);
+
+  // Suscribirse a cambios
+  useEffect(() => {
+    const unsubscribe = subscribeToCardsStateChanges(() => {
+      setRefreshKey(prev => prev + 1);
     });
     
-    return () => {
-      console.log('📡 Desuscribiéndose de cambios en cartas');
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
-  // 🔥 Procesar TODAS las imágenes (SIEMPRE MOSTRAR TODAS)
-  const photoGroups = {
-    group1: processImages(images_5_6, 6),
-    group2: processImages(images_7_8, 8),
-    group3: processImages(images_9_10, 10),
-  };
-
-  console.log('📊 Estado del carrusel (refresh key:', refreshKey, '):', {
-    total_group1: photoGroups.group1.length,
-    total_group2: photoGroups.group2.length,
-    total_group3: photoGroups.group3.length,
-    donated_group1: photoGroups.group1.filter(p => !isCardAvailable(p.id)).length,
-    donated_group2: photoGroups.group2.filter(p => !isCardAvailable(p.id)).length,
-    donated_group3: photoGroups.group3.filter(p => !isCardAvailable(p.id)).length,
-  });
-
-  const totalPhotos = photoGroups.group1.length + photoGroups.group2.length + photoGroups.group3.length;
-
   const openModal = (photo) => {
-    // 🔥 Verificar si la carta está disponible
-    if (!isCardAvailable(photo.id)) {
+    // 🔥 Verificar si la carta está donada (según el backend)
+    if (photo.donated) {
       alert('🎄 Esta carta ya ha sido donada.\n\n¡Gracias por tu interés! Por favor elige otra carta disponible.');
       return;
     }
@@ -86,42 +134,7 @@ const Carousel = () => {
       return;
     }
     
-    // 🔥 Verificar que todas las cartas del carrito sigan disponibles
     const cartCardIds = cartHook.cart.map(item => item.id);
-    console.log('🔍 Validando carrito antes de checkout:', cartCardIds);
-    
-    const validation = validateCartAvailability(cartCardIds);
-    
-    if (!validation.isValid) {
-      const unavailableNames = cartHook.cart
-        .filter(item => validation.unavailableCards.includes(item.id))
-        .map(item => item.name)
-        .join(', ');
-      
-      alert(
-        `⚠️ Algunas cartas ya no están disponibles:\n\n` +
-        `${unavailableNames}\n\n` +
-        `Serán removidas de tu carrito.`
-      );
-      
-      // Remover cartas no disponibles del carrito
-      validation.unavailableCards.forEach(cardId => {
-        cartHook.removeFromCart(cardId);
-      });
-      
-      // Si quedan cartas disponibles, continuar
-      if (validation.availableCards.length === 0) {
-        alert('❌ Tu carrito quedó vacío. Por favor selecciona otras cartas disponibles.');
-        return;
-      }
-      
-      alert(
-        `✅ Continuarás con las cartas disponibles:\n\n` +
-        `${cartHook.cart.filter(item => validation.availableCards.includes(item.id)).map(item => item.name).join(', ')}`
-      );
-    }
-    
-    console.log('✅ Todas las cartas del carrito están disponibles');
     
     const donationData = {
       cart: cartHook.cart,
@@ -132,14 +145,12 @@ const Carousel = () => {
       cardIds: cartCardIds
     };
     
-    console.log('📦 Datos de donación:', donationData);
-    
     setShowCart(false);
     navigate('/donation', { state: donationData });
   };
 
-  const handleResetAllCards = () => {
-    const stats = getStats();
+  const handleResetAllCards = async () => {
+    const stats = await getStats();
     const message = `⚠️ ¿Estás seguro de restaurar todas las cartas?\n\n` +
                    `📊 Estado actual:\n` +
                    `✅ Donadas: ${stats.donated}\n` +
@@ -148,7 +159,7 @@ const Carousel = () => {
                    `Esta acción no se puede deshacer.`;
     
     if (window.confirm(message)) {
-      const success = resetAllCards();
+      const success = await resetAllCards();
       if (success) {
         alert('✅ Todas las cartas han sido restauradas');
         window.location.reload();
@@ -173,7 +184,31 @@ const Carousel = () => {
     };
   }, [isModalOpen, showCart]);
 
-  const stats = getStats();
+  const [stats, setStats] = useState({ donated: 0, available: 0, total: 97 });
+  
+  useEffect(() => {
+    const loadStats = async () => {
+      const newStats = await getStats();
+      setStats(newStats);
+    };
+    loadStats();
+    
+    const interval = setInterval(loadStats, 30000);
+    return () => clearInterval(interval);
+  }, [refreshKey]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p className="text-xl font-semibold" style={{ color: '#30793b' }}>
+            Cargando cartas...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -203,7 +238,6 @@ const Carousel = () => {
             Elige una carta y comparte con nosotros el regalo más grande: una Navidad vivida en comunidad.
           </p>
           
-          {/* 🔥 Mostrar estadísticas globales */}
           <div className="mt-8 inline-block bg-white rounded-2xl shadow-lg p-6 border-2 border-gray-200">
             <p className="text-sm font-semibold text-gray-600 mb-2">📊 Estado de las cartas</p>
             <div className="flex gap-6 justify-center">
@@ -283,18 +317,6 @@ const Carousel = () => {
           isInCart={cartHook.isInCart}
           getCartItem={cartHook.getCartItem}
         />
-
-        {/* 🔥 Botón de reset para admin (solo visible si hay cartas donadas) */}
-        {stats.donated > 0 && (
-          <div className="text-center mt-12">
-            <button
-              onClick={handleResetAllCards}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-medium shadow-lg"
-            >
-              🔄 Reiniciar todas las cartas (Solo Admin)
-            </button>
-          </div>
-        )}
       </div>
 
       <CardModal
