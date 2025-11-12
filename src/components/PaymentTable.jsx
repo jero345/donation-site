@@ -1,3 +1,4 @@
+// src/components/PaymentTable.jsx
 import React, { useState, useEffect } from 'react';
 
 const PaymentTable = () => {
@@ -15,6 +16,7 @@ const PaymentTable = () => {
       setLoading(true);
       const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       
+      // Corregir la interpolación de la URL
       const response = await fetch(`${API_BASE_URL}/api/v1/donation`, {
         method: 'GET',
         headers: {
@@ -31,10 +33,19 @@ const PaymentTable = () => {
       // Formatear los datos del API al formato del componente
       const formattedDonations = (result.data || []).map((item) => ({
         id: item.id,
-        date: formatDate(item.createdAt),
-        customer: item.name || 'N/A',
-        cards: parseCards(item.people_donor),
-        amount: parseAmount(item.people_donor)
+        reference: item.reference,
+        name: item.name,
+        id_type: item.id_type,
+        id_number: item.id_number,
+        email: item.email,
+        address: item.address,
+        phone: item.phone,
+        children: item.children, // Aquí está la info del hijo/a TCS
+        people_donor: item.people_donor,
+        status: item.status,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        transaction: item.transaction || {},
       }));
 
       setDonations(formattedDonations);
@@ -46,7 +57,7 @@ const PaymentTable = () => {
     }
   };
 
-  // Formatear fecha del API
+  // Formatear fecha
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -55,6 +66,15 @@ const PaymentTable = () => {
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${month} ${day}, ${hours}:${minutes}`;
+  };
+
+  // Formatear precio
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('es-CO', {
+      style: 'currency',
+      currency: 'COP',
+      minimumFractionDigits: 0,
+    }).format(price);
   };
 
   // Extraer nombres de las cartas del people_donor
@@ -83,12 +103,40 @@ const PaymentTable = () => {
     return values.reduce((sum, val) => sum + val, 0);
   };
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('es-CO', {
-      style: 'currency',
-      currency: 'COP',
-      minimumFractionDigits: 0,
-    }).format(price);
+  // Estado de la transacción
+  const getTransactionStatus = (status) => {
+    switch (status) {
+      case 'APROBADO':
+        return <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">Aprobado</span>;
+      case 'PENDIENTE':
+        return <span className="px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Pendiente</span>;
+      case 'RECHAZADO':
+        return <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">Rechazado</span>;
+      default:
+        return <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">{status}</span>;
+    }
+  };
+
+  // Formatear información del hijo/a TCS
+  const formatChildrenInfo = (children) => {
+    if (!children || typeof children !== 'string') return 'N/A';
+    
+    // Si es un string, intentar parsearlo como JSON
+    try {
+      const parsed = JSON.parse(children);
+      if (Array.isArray(parsed)) {
+        return parsed.map((child, idx) => {
+          const name = child.nombre || 'N/A';
+          const grado = child.grado || 'N/A';
+          return `${name} (${grado})`;
+        }).join(', ');
+      }
+    } catch (e) {
+      // Si no es JSON válido, devolver como está
+      return children;
+    }
+    
+    return 'N/A';
   };
 
   if (loading) {
@@ -106,7 +154,7 @@ const PaymentTable = () => {
     return (
       <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
         <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
-          <p className="text-red-600 font-medium">⚠️ {error}</p>
+          <p className="text-red-600 font-medium">⚠ {error}</p>
           <button 
             onClick={fetchDonations}
             className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -120,20 +168,13 @@ const PaymentTable = () => {
 
   return (
     <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-
       {/* Encabezado */}
       <div className="mb-6">
-        <h1 
-          className="text-3xl sm:text-4xl font-bold mb-2"
-          style={{ color: '#004990', fontFamily: 'Poppins, sans-serif' }}
-        >
+        <h1 className="text-3xl sm:text-4xl font-bold mb-2" style={{ color: '#004990', fontFamily: 'Poppins, sans-serif' }}>
           📊 Registro de Donaciones
         </h1>
-        <p 
-          className="text-lg"
-          style={{ color: '#30793b', fontFamily: 'Roboto, sans-serif' }}
-        >
-          Historial de donaciones realizadas
+        <p className="text-lg" style={{ color: '#30793b', fontFamily: 'Roboto, sans-serif' }}>
+          Historial completo de donaciones realizadas
         </p>
       </div>
 
@@ -150,50 +191,75 @@ const PaymentTable = () => {
                   Donante
                 </th>
                 <th className="px-4 py-4 text-left text-white font-semibold text-sm" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                  ID / Email
+                </th>
+                <th className="px-4 py-4 text-left text-white font-semibold text-sm" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                  Dirección
+                </th>
+                <th className="px-4 py-4 text-left text-white font-semibold text-sm" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                  Hijo/a TCS
+                </th>
+                <th className="px-4 py-4 text-left text-white font-semibold text-sm" style={{ fontFamily: 'Poppins, sans-serif' }}>
                   Cartas
                 </th>
                 <th className="px-4 py-4 text-right text-white font-semibold text-sm" style={{ fontFamily: 'Poppins, sans-serif' }}>
                   Valor
+                </th>
+                <th className="px-4 py-4 text-left text-white font-semibold text-sm" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                  Estado
+                </th>
+                <th className="px-4 py-4 text-left text-white font-semibold text-sm" style={{ fontFamily: 'Poppins, sans-serif' }}>
+                  Referencia
                 </th>
               </tr>
             </thead>
             <tbody>
               {donations.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="px-4 py-8 text-center text-gray-500">
+                  <td colSpan="9" className="px-4 py-8 text-center text-gray-500">
                     No hay donaciones registradas
                   </td>
                 </tr>
               ) : (
                 donations.map((donation) => (
-                  <tr 
-                    key={donation.id}
-                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                  >
+                  <tr key={donation.id} className="border-b border-gray-200 hover:bg-gray-50 transition-colors">
                     <td className="px-4 py-4 text-sm text-gray-700" style={{ fontFamily: 'Roboto, sans-serif' }}>
-                      {donation.date}
+                      {formatDate(donation.createdAt)}
                     </td>
                     <td className="px-4 py-4 text-sm font-medium text-gray-900" style={{ fontFamily: 'Roboto, sans-serif' }}>
-                      {donation.customer}
+                      {donation.name}
+                    </td>
+                    <td className="px-4 py-4 text-sm" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                      <div className="flex flex-col gap-1">
+                        <span>{donation.id_type}: {donation.id_number}</span>
+                        <span className="text-xs text-gray-500">{donation.email}</span>
+                      </div>
+                    </td>
+                    <td className="px-4 py-4 text-sm" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                      {donation.address || 'N/A'}
+                    </td>
+                    <td className="px-4 py-4 text-sm" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                      {formatChildrenInfo(donation.children)}
                     </td>
                     <td className="px-4 py-4 text-sm" style={{ fontFamily: 'Roboto, sans-serif' }}>
                       <div className="flex flex-wrap gap-1">
-                        {donation.cards.map((card, idx) => (
-                          <span 
-                            key={idx}
-                            className="inline-block px-2 py-1 rounded-full text-xs font-medium"
-                            style={{ 
-                              backgroundColor: '#e8f5e9',
-                              color: '#30793b'
-                            }}
-                          >
+                        {parseCards(donation.people_donor).map((card, idx) => (
+                          <span key={idx} className="inline-block px-2 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: '#e8f5e9', color: '#30793b' }}>
                             {card}
                           </span>
                         ))}
                       </div>
                     </td>
                     <td className="px-4 py-4 text-right text-sm font-bold" style={{ color: '#004990', fontFamily: 'Roboto, sans-serif' }}>
-                      {formatPrice(donation.amount)}
+                      {formatPrice(parseAmount(donation.people_donor))}
+                    </td>
+                    <td className="px-4 py-4 text-sm" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                      {getTransactionStatus(donation.status)}
+                    </td>
+                    <td className="px-4 py-4 text-sm" style={{ fontFamily: 'Roboto, sans-serif' }}>
+                      <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                        {donation.reference}
+                      </code>
                     </td>
                   </tr>
                 ))
@@ -206,7 +272,6 @@ const PaymentTable = () => {
       {/* Resumen */}
       <div className="mt-6 bg-white rounded-xl shadow-lg p-6 border border-gray-200">
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          
           <div className="text-center p-4 rounded-lg" style={{ backgroundColor: '#e8f5e9' }}>
             <p className="text-sm text-gray-600 mb-1" style={{ fontFamily: 'Roboto, sans-serif' }}>
               Total Donaciones
@@ -221,7 +286,7 @@ const PaymentTable = () => {
               Cartas Donadas
             </p>
             <p className="text-2xl font-bold" style={{ color: '#004990', fontFamily: 'Poppins, sans-serif' }}>
-              {donations.reduce((sum, d) => sum + d.cards.length, 0)}
+              {donations.reduce((sum, d) => sum + parseCards(d.people_donor).length, 0)}
             </p>
           </div>
 
@@ -230,13 +295,23 @@ const PaymentTable = () => {
               Total Recaudado
             </p>
             <p className="text-2xl font-bold" style={{ color: '#856404', fontFamily: 'Poppins, sans-serif' }}>
-              {formatPrice(
-                donations.reduce((sum, d) => sum + d.amount, 0)
-              )}
+              {formatPrice(donations.reduce((sum, d) => sum + parseAmount(d.people_donor), 0))}
             </p>
           </div>
-
         </div>
+      </div>
+
+      {/* Botón para ver detalles completos (opcional) */}
+      <div className="mt-6 text-center">
+        <button
+          onClick={() => {
+            console.log('Detalles completos:', donations);
+            alert('Los detalles completos están en la consola (F12)');
+          }}
+          className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors"
+        >
+          🔍 Ver detalles completos en consola
+        </button>
       </div>
 
     </div>

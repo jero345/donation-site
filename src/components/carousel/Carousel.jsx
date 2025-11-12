@@ -1,3 +1,4 @@
+// components/carousel/Carousel.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CarouselSection from './CarouselSection';
@@ -5,9 +6,15 @@ import CardModal from './CardModal';
 import CartModal from './CartModal';
 import { useCart } from '../hooks/useCart';
 import { useCarousel } from '../hooks/useCarousel';
-import { processImages, filterAvailableCards } from '../utils/imageProcessing';
+import { processImages } from '../utils/imageProcessing';
 import { MINIMUM_DONATION } from '../utils/priceFormatting';
-import { donatedCardsStorage } from '../utils/donatedCardsStorage';
+import { 
+  isCardAvailable, 
+  getStats, 
+  resetAllCards,
+  subscribeToCardsStateChanges,
+  validateCartAvailability 
+} from '../utils/cardsStateManager';
 import bannerImage from '../../assets/logos/logo.png';
 
 const images_5_6 = import.meta.glob('/src/assets/carts/5-6/*.webp', { eager: true });
@@ -18,38 +25,52 @@ const Carousel = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [showCart, setShowCart] = useState(false);
-  const [donatedCards, setDonatedCards] = useState([]);
+  const [refreshKey, setRefreshKey] = useState(0); // 🔥 Para forzar re-render
   const navigate = useNavigate();
 
   const cartHook = useCart();
   const carouselHook = useCarousel();
 
-  // Cargar cartas donadas desde localStorage al iniciar
+  // 🔥 Suscribirse a cambios en el estado de las cartas
   useEffect(() => {
-    const storedDonatedCards = donatedCardsStorage.getDonatedCards();
-    setDonatedCards(storedDonatedCards);
+    console.log('📡 Suscribiéndose a cambios en cartas...');
+    
+    const unsubscribe = subscribeToCardsStateChanges((newState) => {
+      console.log('🔄 Estado de cartas cambió:', newState);
+      setRefreshKey(prev => prev + 1); // Forzar re-render
+    });
+    
+    return () => {
+      console.log('📡 Desuscribiéndose de cambios en cartas');
+      unsubscribe();
+    };
   }, []);
 
-  const allPhotoGroups = {
+  // 🔥 Procesar TODAS las imágenes (SIEMPRE MOSTRAR TODAS)
+  const photoGroups = {
     group1: processImages(images_5_6, 6),
     group2: processImages(images_7_8, 8),
     group3: processImages(images_9_10, 10),
   };
 
-  const photoGroups = {
-    group1: filterAvailableCards(allPhotoGroups.group1, donatedCards),
-    group2: filterAvailableCards(allPhotoGroups.group2, donatedCards),
-    group3: filterAvailableCards(allPhotoGroups.group3, donatedCards),
-  };
+  console.log('📊 Estado del carrusel (refresh key:', refreshKey, '):', {
+    total_group1: photoGroups.group1.length,
+    total_group2: photoGroups.group2.length,
+    total_group3: photoGroups.group3.length,
+    donated_group1: photoGroups.group1.filter(p => !isCardAvailable(p.id)).length,
+    donated_group2: photoGroups.group2.filter(p => !isCardAvailable(p.id)).length,
+    donated_group3: photoGroups.group3.filter(p => !isCardAvailable(p.id)).length,
+  });
 
   const totalPhotos = photoGroups.group1.length + photoGroups.group2.length + photoGroups.group3.length;
 
   const openModal = (photo) => {
-    // Verificar si la carta ya fue donada
-    if (donatedCardsStorage.isCardDonated(photo.id)) {
-      alert('🎄 Esta carta ya ha sido donada. ¡Gracias por tu interés!');
+    // 🔥 Verificar si la carta está disponible
+    if (!isCardAvailable(photo.id)) {
+      alert('🎄 Esta carta ya ha sido donada.\n\n¡Gracias por tu interés! Por favor elige otra carta disponible.');
       return;
     }
+    
     setSelectedCard(photo);
     setIsModalOpen(true);
   };
@@ -65,30 +86,75 @@ const Carousel = () => {
       return;
     }
     
-    // Guardar IDs de cartas en localStorage
+    // 🔥 Verificar que todas las cartas del carrito sigan disponibles
     const cartCardIds = cartHook.cart.map(item => item.id);
-    const updatedDonatedCards = donatedCardsStorage.saveDonatedCards(cartCardIds);
-    setDonatedCards(updatedDonatedCards);
+    console.log('🔍 Validando carrito antes de checkout:', cartCardIds);
+    
+    const validation = validateCartAvailability(cartCardIds);
+    
+    if (!validation.isValid) {
+      const unavailableNames = cartHook.cart
+        .filter(item => validation.unavailableCards.includes(item.id))
+        .map(item => item.name)
+        .join(', ');
+      
+      alert(
+        `⚠️ Algunas cartas ya no están disponibles:\n\n` +
+        `${unavailableNames}\n\n` +
+        `Serán removidas de tu carrito.`
+      );
+      
+      // Remover cartas no disponibles del carrito
+      validation.unavailableCards.forEach(cardId => {
+        cartHook.removeFromCart(cardId);
+      });
+      
+      // Si quedan cartas disponibles, continuar
+      if (validation.availableCards.length === 0) {
+        alert('❌ Tu carrito quedó vacío. Por favor selecciona otras cartas disponibles.');
+        return;
+      }
+      
+      alert(
+        `✅ Continuarás con las cartas disponibles:\n\n` +
+        `${cartHook.cart.filter(item => validation.availableCards.includes(item.id)).map(item => item.name).join(', ')}`
+      );
+    }
+    
+    console.log('✅ Todas las cartas del carrito están disponibles');
     
     const donationData = {
       cart: cartHook.cart,
       cardsTotal: cartHook.getTotalCardsPrice(),
       voluntaryDonation: cartHook.getVoluntaryAmount(),
       totalPrice: cartHook.getTotalPrice(),
-      numberOfCards: cartHook.cart.length
+      numberOfCards: cartHook.cart.length,
+      cardIds: cartCardIds
     };
     
-    cartHook.clearCart();
+    console.log('📦 Datos de donación:', donationData);
+    
     setShowCart(false);
     navigate('/donation', { state: donationData });
   };
 
-  const handleResetDonatedCards = () => {
-    if (window.confirm('⚠️ ¿Estás seguro de restaurar todas las cartas? Esta acción no se puede deshacer.')) {
-      donatedCardsStorage.clearDonatedCards();
-      setDonatedCards([]);
-      carouselHook.setCurrentIndexes({ group1: 0, group2: 0, group3: 0 });
-      alert('✅ Todas las cartas han sido restauradas');
+  const handleResetAllCards = () => {
+    const stats = getStats();
+    const message = `⚠️ ¿Estás seguro de restaurar todas las cartas?\n\n` +
+                   `📊 Estado actual:\n` +
+                   `✅ Donadas: ${stats.donated}\n` +
+                   `💚 Disponibles: ${stats.available}\n` +
+                   `📦 Total: ${stats.total}\n\n` +
+                   `Esta acción no se puede deshacer.`;
+    
+    if (window.confirm(message)) {
+      const success = resetAllCards();
+      if (success) {
+        alert('✅ Todas las cartas han sido restauradas');
+        window.location.reload();
+      } else {
+        alert('❌ Error al restaurar las cartas');
+      }
     }
   };
 
@@ -107,27 +173,13 @@ const Carousel = () => {
     };
   }, [isModalOpen, showCart]);
 
-  if (totalPhotos === 0) {
-    return (
-      <div className="text-center p-8" style={{ color: '#ae311a', fontFamily: 'Poppins, sans-serif' }}>
-        <p className="text-2xl mb-4">🎄 ¡Todas las cartas han sido donadas! 🎄</p>
-        <p className="text-lg mb-6">Gracias por tu generosidad esta Navidad</p>
-        <button
-          onClick={handleResetDonatedCards}
-          className="mt-4 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-medium"
-        >
-          🔄 Reiniciar cartas (Solo Admin)
-        </button>
-      </div>
-    );
-  }
+  const stats = getStats();
 
   return (
     <>
       <div className="w-full mb-8 px-4 sm:px-6 lg:px-8">
         <img
-          src={bannerImage}
-          alt="The Gift of Sharing"
+          src={bannerImage} alt="The Gift of Sharing"
           className="w-full h-auto max-h-[300px] object-contain mx-auto"
           style={{ 
             filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
@@ -150,24 +202,26 @@ const Carousel = () => {
           >
             Elige una carta y comparte con nosotros el regalo más grande: una Navidad vivida en comunidad.
           </p>
-        </div>
-
-        {/* Botones de desarrollo - comentados para producción
-        {donatedCards.length > 0 && (
-          <div className="fixed top-4 right-4 z-50 flex gap-2">
-            <div className="bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium">
-              🎁 {donatedCards.length} donadas
+          
+          {/* 🔥 Mostrar estadísticas globales */}
+          <div className="mt-8 inline-block bg-white rounded-2xl shadow-lg p-6 border-2 border-gray-200">
+            <p className="text-sm font-semibold text-gray-600 mb-2">📊 Estado de las cartas</p>
+            <div className="flex gap-6 justify-center">
+              <div className="text-center">
+                <p className="text-3xl font-bold" style={{ color: '#92C83E' }}>{stats.available}</p>
+                <p className="text-xs text-gray-500">Disponibles</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold" style={{ color: '#ae311a' }}>{stats.donated}</p>
+                <p className="text-xs text-gray-500">Donadas</p>
+              </div>
+              <div className="text-center">
+                <p className="text-3xl font-bold text-gray-700">{stats.total}</p>
+                <p className="text-xs text-gray-500">Total</p>
+              </div>
             </div>
-            <button
-              onClick={handleResetDonatedCards}
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg transition-all text-sm font-medium"
-              title="Reiniciar cartas donadas"
-            >
-              🔄 Reset
-            </button>
           </div>
-        )}
-        */}
+        </div>
 
         {cartHook.cart.length > 0 && (
           <button
@@ -186,6 +240,7 @@ const Carousel = () => {
         )}
 
         <CarouselSection
+          key={`group1-${refreshKey}`}
           groupKey="group1"
           title="🎅 Niños y Niñas de 5-6 años 🎄"
           photos={photoGroups.group1}
@@ -197,10 +252,10 @@ const Carousel = () => {
           onOpenModal={openModal}
           isInCart={cartHook.isInCart}
           getCartItem={cartHook.getCartItem}
-          donatedCards={donatedCards}
         />
 
         <CarouselSection
+          key={`group2-${refreshKey}`}
           groupKey="group2"
           title="🎁 Niños y Niñas de 7-8 años ⭐"
           photos={photoGroups.group2}
@@ -212,10 +267,10 @@ const Carousel = () => {
           onOpenModal={openModal}
           isInCart={cartHook.isInCart}
           getCartItem={cartHook.getCartItem}
-          donatedCards={donatedCards}
         />
 
         <CarouselSection
+          key={`group3-${refreshKey}`}
           groupKey="group3"
           title="✨ Niños y Niñas de 9-10 años 🎄"
           photos={photoGroups.group3}
@@ -227,8 +282,19 @@ const Carousel = () => {
           onOpenModal={openModal}
           isInCart={cartHook.isInCart}
           getCartItem={cartHook.getCartItem}
-          donatedCards={donatedCards}
         />
+
+        {/* 🔥 Botón de reset para admin (solo visible si hay cartas donadas) */}
+        {stats.donated > 0 && (
+          <div className="text-center mt-12">
+            <button
+              onClick={handleResetAllCards}
+              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all font-medium shadow-lg"
+            >
+              🔄 Reiniciar todas las cartas (Solo Admin)
+            </button>
+          </div>
+        )}
       </div>
 
       <CardModal

@@ -25,7 +25,7 @@ const ChildrenInfoSection = ({
         className="text-sm text-gray-600 mb-4"
         style={{ fontFamily: 'Roboto, sans-serif' }}
       >
-        (Opcional - Solo si tienes un hijo/a en TCS)
+        Queremos que como familia compartan este día con la comunidad, inscribe a tu hijo / a y celebremos juntos (Un estudiante TCS por carta)
       </p>
 
       {/* Generar tantos formularios como cartas */}

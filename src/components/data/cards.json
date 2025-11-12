@@ -1,0 +1,681 @@
+[
+  {
+    "id": "5-6-alan-correa",
+    "url": "src/assets/carts/5-6/Alan Correa.webp",
+    "nombre": "Alan Correa",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-anthony-upegui",
+    "url": "/src/assets/carts/5-6/Anthony Upegui Pérez.webp",
+    "nombre": "Anthony Upegui Pérez",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-dylan-stiven",
+    "url": "/src/assets/carts/5-6/Dylan Stiven Ortiz.webp",
+    "nombre": "Dylan Stiven Ortiz",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-dylan-zapata",
+    "url": "/src/assets/carts/5-6/Dylan Zapata.webp",
+    "nombre": "Dylan Zapata",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-eliza-eregua",
+    "url": "/src/assets/carts/5-6/Eliza Eregua.webp",
+    "nombre": "Eliza Eregua",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-emiliana-ramirez",
+    "url": "/src/assets/carts/5-6/Emiliana Ramírez.webp",
+    "nombre": "Emiliana Ramírez",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-esly-norena",
+    "url": "/src/assets/carts/5-6/Esly Noreña.webp",
+    "nombre": "Esly Noreña",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-isabella-zapata",
+    "url": "/src/assets/carts/5-6/Isabella Zapata.webp",
+    "nombre": "Isabella Zapata",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-josue-arias",
+    "url": "/src/assets/carts/5-6/Josué Arias.webp",
+    "nombre": "Josué Arias",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-juan-pablo",
+    "url": "/src/assets/carts/5-6/Juan Pablo Sánchez.webp",
+    "nombre": "Juan Pablo Sánchez",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-juana-valentina",
+    "url": "/src/assets/carts/5-6/Juana Valentina Oquendo.webp",
+    "nombre": "Juana Valentina Oquendo",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-juanita-lopez",
+    "url": "/src/assets/carts/5-6/Juanita López.webp",
+    "nombre": "Juanita López",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-julian-oviedo",
+    "url": "/src/assets/carts/5-6/Julián Oviedo.webp",
+    "nombre": "Julián Oviedo",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-kamila-michell",
+    "url": "/src/assets/carts/5-6/Kamila Michell Biznaja.webp",
+    "nombre": "Kamila Michell Biznaja",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-liam-andres",
+    "url": "/src/assets/carts/5-6/Liam Andrés Ojeda Ariza.webp",
+    "nombre": "Liam Andrés Ojeda Ariza",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-maria-paz",
+    "url": "/src/assets/carts/5-6/María Paz Zapata.webp",
+    "nombre": "María Paz Zapata",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-martin-betancourt",
+    "url": "/src/assets/carts/5-6/MARTÍN BETANCOURT.webp",
+    "nombre": "Martín Betancourt",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-maximiliano",
+    "url": "/src/assets/carts/5-6/Maximiliano Hernández.webp",
+    "nombre": "Maximiliano Hernández",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-miguel-silva",
+    "url": "/src/assets/carts/5-6/Miguel Silva Hincapié.webp",
+    "nombre": "Miguel Silva Hincapié",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-nicolas-carmona",
+    "url": "/src/assets/carts/5-6/Nicolás Carmona.webp",
+    "nombre": "Nicolás Carmona",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-salvador-soto",
+    "url": "/src/assets/carts/5-6/Salvador Soto.webp",
+    "nombre": "Salvador Soto",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-samuel-mathias",
+    "url": "/src/assets/carts/5-6/Samuel Mathías.webp",
+    "nombre": "Samuel Mathías",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "5-6-sara-atehotua",
+    "url": "/src/assets/carts/5-6/Sara Atehotúa.webp",
+    "nombre": "Sara Atehotúa",
+    "categoria": "5-6",
+    "state": true
+  },
+  {
+    "id": "7-8-abraham-david",
+    "url": "/src/assets/carts/7-8/Abraham David Ojeda Ariza.webp",
+    "nombre": "Abraham David Ojeda Ariza",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-amelia-moreno",
+    "url": "/src/assets/carts/7-8/Amelia Moreno.webp",
+    "nombre": "Amelia Moreno",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-ana-sofia",
+    "url": "/src/assets/carts/7-8/Ana Sofía Álvarez.webp",
+    "nombre": "Ana Sofía Álvarez",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-celeste-zapata",
+    "url": "/src/assets/carts/7-8/Celeste Zapata.webp",
+    "nombre": "Celeste Zapata",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-cristobal-sanchez",
+    "url": "/src/assets/carts/7-8/Cristóbal Sánchez.webp",
+    "nombre": "Cristóbal Sánchez",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-cristobal-sierra",
+    "url": "/src/assets/carts/7-8/Cristóbal Sierra Arboleda.webp",
+    "nombre": "Cristóbal Sierra Arboleda",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-deiner-cogollo",
+    "url": "/src/assets/carts/7-8/Deiner Cogollo.webp",
+    "nombre": "Deiner Cogollo",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-dilan-zapata",
+    "url": "/src/assets/carts/7-8/Dilan Zapata.webp",
+    "nombre": "Dilan Zapata",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-emiliana-gonzales",
+    "url": "/src/assets/carts/7-8/Emiliana Gonzales Buitrago.webp",
+    "nombre": "Emiliana Gonzales Buitrago",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-gabby-jaramillo",
+    "url": "/src/assets/carts/7-8/Gabby Jaramillo.webp",
+    "nombre": "Gabby Jaramillo",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-isaac-buitrago",
+    "url": "/src/assets/carts/7-8/Isaac Buitrago Giraldo.webp",
+    "nombre": "Isaac Buitrago Giraldo",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-isaac-rendon",
+    "url": "/src/assets/carts/7-8/Isaac Rendón.webp",
+    "nombre": "Isaac Rendón",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-isaac-restrepo",
+    "url": "/src/assets/carts/7-8/Isaac Restrepo Grajales.webp",
+    "nombre": "Isaac Restrepo Grajales",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-ismael-marulanda",
+    "url": "/src/assets/carts/7-8/Ismael Marulanda.webp",
+    "nombre": "Ismael Marulanda",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-juan-esteban-grajales",
+    "url": "/src/assets/carts/7-8/Juan Esteban Grajales.webp",
+    "nombre": "Juan Esteban Grajales",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-juan-esteban-jimenez",
+    "url": "/src/assets/carts/7-8/Juan Esteban Jiménez.webp",
+    "nombre": "Juan Esteban Jiménez",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-juan-fernando",
+    "url": "/src/assets/carts/7-8/Juan Fernando Jiménez Ramírez.webp",
+    "nombre": "Juan Fernando Jiménez Ramírez",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-lorenzo-ayala",
+    "url": "/src/assets/carts/7-8/Lorenzo Ayala.webp",
+    "nombre": "Lorenzo Ayala",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-lucia-morales",
+    "url": "/src/assets/carts/7-8/Lucía Morales.webp",
+    "nombre": "Lucía Morales",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-luciana-dimenico",
+    "url": "/src/assets/carts/7-8/Luciana Dimenico Álvarez.webp",
+    "nombre": "Luciana Dimenico Álvarez",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-luciana-echanci",
+    "url": "/src/assets/carts/7-8/Luciana Echanci Cuartas.webp",
+    "nombre": "Luciana Echanci Cuartas",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-luciana-orozco",
+    "url": "/src/assets/carts/7-8/Luciana Orozco Loaiza.webp",
+    "nombre": "Luciana Orozco Loaiza",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-maria-clara",
+    "url": "/src/assets/carts/7-8/María Clara Ríos.webp",
+    "nombre": "María Clara Ríos",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-maria-fernanda",
+    "url": "/src/assets/carts/7-8/María Fernanda Hernández.webp",
+    "nombre": "María Fernanda Hernández",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-maria-isabel",
+    "url": "/src/assets/carts/7-8/María Isabel Cardona.webp",
+    "nombre": "María Isabel Cardona",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-marlon-molina",
+    "url": "/src/assets/carts/7-8/Marlon Molina.webp",
+    "nombre": "Marlon Molina",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-martina-valverde",
+    "url": "/src/assets/carts/7-8/Martina Valverde Valencia.webp",
+    "nombre": "Martina Valverde Valencia",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-matias-hincapie",
+    "url": "/src/assets/carts/7-8/Matías Hincapié.webp",
+    "nombre": "Matías Hincapié",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-pablo-morales",
+    "url": "/src/assets/carts/7-8/Pablo Morales Ríos.webp",
+    "nombre": "Pablo Morales Ríos",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-santiago-berrio",
+    "url": "/src/assets/carts/7-8/Santiago Berrio.webp",
+    "nombre": "Santiago Berrio",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-valeria-muneton",
+    "url": "/src/assets/carts/7-8/Valeria Muñetón.webp",
+    "nombre": "Valeria Muñetón",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-victoria-ospina",
+    "url": "/src/assets/carts/7-8/Victoria Ospina.webp",
+    "nombre": "Victoria Ospina",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "7-8-yeiron-castano",
+    "url": "/src/assets/carts/7-8/Yeiron Castaño.webp",
+    "nombre": "Yeiron Castaño",
+    "categoria": "7-8",
+    "state": true
+  },
+  {
+    "id": "9-10-abigail-ramirez",
+    "url": "/src/assets/carts/9-10/Abigail Ramírez.webp",
+    "nombre": "Abigail Ramírez",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-amalia-duque",
+    "url": "/src/assets/carts/9-10/Amalia Duque.webp",
+    "nombre": "Amalia Duque",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-beilan-serna",
+    "url": "/src/assets/carts/9-10/Beilan Serna.webp",
+    "nombre": "Beilan Serna",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-benjamin-moreno",
+    "url": "/src/assets/carts/9-10/Benjamín Moreno.webp",
+    "nombre": "Benjamín Moreno",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-celeste-morales",
+    "url": "/src/assets/carts/9-10/Celeste Morales.webp",
+    "nombre": "Celeste Morales",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-celeste-ramirez",
+    "url": "/src/assets/carts/9-10/Celeste Ramírez.webp",
+    "nombre": "Celeste Ramírez",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-cristian-suarez",
+    "url": "/src/assets/carts/9-10/Cristian Suárez.webp",
+    "nombre": "Cristian Suárez",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-daviel-suarez",
+    "url": "/src/assets/carts/9-10/Daviel Suárez.webp",
+    "nombre": "Daviel Suárez",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-dulce-maria-estrada",
+    "url": "/src/assets/carts/9-10/Dulce María Estrada.webp",
+    "nombre": "Dulce María Estrada",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-dulce-maria-galvis",
+    "url": "/src/assets/carts/9-10/Dulce María Galvis.webp",
+    "nombre": "Dulce María Galvis",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-emanuel-rave",
+    "url": "/src/assets/carts/9-10/Emanuel Rave.webp",
+    "nombre": "Emanuel Rave",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-emiliana-pulgarin",
+    "url": "/src/assets/carts/9-10/Emiliana Pulgarín.webp",
+    "nombre": "Emiliana Pulgarín",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-emmanuel-david",
+    "url": "/src/assets/carts/9-10/Emmanuel David Iriarte.webp",
+    "nombre": "Emmanuel David Iriarte",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-gabriela-soto",
+    "url": "/src/assets/carts/9-10/Gabriela Soto.webp",
+    "nombre": "Gabriela Soto",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-guadalupe-restrepo",
+    "url": "/src/assets/carts/9-10/Guadalupe Restrepo.webp",
+    "nombre": "Guadalupe Restrepo",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-isaac-vargas",
+    "url": "/src/assets/carts/9-10/Isaac Vargas.webp",
+    "nombre": "Isaac Vargas",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-isabella-patino",
+    "url": "/src/assets/carts/9-10/Isabella Patiño.webp",
+    "nombre": "Isabella Patiño",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-jacobo-chavarria",
+    "url": "/src/assets/carts/9-10/Jacobo Chavarría.webp",
+    "nombre": "Jacobo Chavarría",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-jeronimo-montoya",
+    "url": "/src/assets/carts/9-10/Jerónimo Montoya.webp",
+    "nombre": "Jerónimo Montoya",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-jeronimo-sanchez",
+    "url": "/src/assets/carts/9-10/Jerónimo Sánchez.webp",
+    "nombre": "Jerónimo Sánchez",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-jhosue-ortega",
+    "url": "/src/assets/carts/9-10/Jhosué Ortega.webp",
+    "nombre": "Jhosué Ortega",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-laura-sanchez",
+    "url": "/src/assets/carts/9-10/Laura Sánchez.webp",
+    "nombre": "Laura Sánchez",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-loriannys-mauribel",
+    "url": "/src/assets/carts/9-10/LORIANNYS MAURIBEL CUERO.webp",
+    "nombre": "Loriannys Mauribel Cuero",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-luciana-ramirez",
+    "url": "/src/assets/carts/9-10/Luciana Ramírez.webp",
+    "nombre": "Luciana Ramírez",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-maicol-mestra",
+    "url": "/src/assets/carts/9-10/Maicol Mestra.webp",
+    "nombre": "Maicol Mestra",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-maria-antonia",
+    "url": "/src/assets/carts/9-10/María Antonia Atehortúa.webp",
+    "nombre": "María Antonia Atehortúa",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-maria-cristina",
+    "url": "/src/assets/carts/9-10/María Cristina Ramírez.webp",
+    "nombre": "María Cristina Ramírez",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-maria-guadalupe",
+    "url": "/src/assets/carts/9-10/María Guadalupe Quintero.webp",
+    "nombre": "María Guadalupe Quintero",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-maria-jose",
+    "url": "/src/assets/carts/9-10/María José Tabares.webp",
+    "nombre": "María José Tabares",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-mariangel-berrio",
+    "url": "/src/assets/carts/9-10/Mariangel Berrio.webp",
+    "nombre": "Mariangel Berrio",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-mariangel-gomez",
+    "url": "/src/assets/carts/9-10/Mariangel Gómez.webp",
+    "nombre": "Mariangel Gómez",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-mariangel-rios",
+    "url": "/src/assets/carts/9-10/Mariangel Ríos.webp",
+    "nombre": "Mariangel Ríos",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-martin-giraldo",
+    "url": "/src/assets/carts/9-10/Martín Giraldo.webp",
+    "nombre": "Martín Giraldo",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-melany-munera",
+    "url": "/src/assets/carts/9-10/Melany Múnera.webp",
+    "nombre": "Melany Múnera",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-ronni-castano",
+    "url": "/src/assets/carts/9-10/Ronni Castaño.webp",
+    "nombre": "Ronni Castaño",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-samuel-arias",
+    "url": "/src/assets/carts/9-10/Samuel Arias.webp",
+    "nombre": "Samuel Arias",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-shantall-grajales",
+    "url": "/src/assets/carts/9-10/Shantall Grajales Soto.webp",
+    "nombre": "Shantall Grajales Soto",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-suquing-jasiel",
+    "url": "/src/assets/carts/9-10/Suquing Jasiel.webp",
+    "nombre": "Suquing Jasiel",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-susana-betancur",
+    "url": "/src/assets/carts/9-10/Susana Betancur.webp",
+    "nombre": "Susana Betancur",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-tomas-hernandez",
+    "url": "/src/assets/carts/9-10/Tomás Hernández.webp",
+    "nombre": "Tomás Hernández",
+    "categoria": "9-10",
+    "state": true
+  },
+  {
+    "id": "9-10-violeta-vargas",
+    "url": "/src/assets/carts/9-10/Violeta Vargas.webp",
+    "nombre": "Violeta Vargas",
+    "categoria": "9-10",
+    "state": true
+  }
+]

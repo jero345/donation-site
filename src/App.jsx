@@ -1,3 +1,4 @@
+// App.jsx
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
@@ -36,7 +37,6 @@ function App() {
         {/* Footer Fundación TCS */}
         <footer className="relative z-10 text-white py-12" style={{ background: 'linear-gradient(to right,  #004990)' }}>
           <div className="max-w-6xl mx-auto px-6">
-            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
               
               {/* Sección 1: Información de contacto */}
@@ -107,7 +107,6 @@ function App() {
 
             <div className="pt-6" style={{ borderTop: '1px solid rgba(146, 200, 62, 0.3)' }}>
               <div className="flex items-center justify-between gap-4">
-                
                 <div className="flex-shrink-0">
                   <img
                     src={logoColumbus}
@@ -126,7 +125,6 @@ function App() {
                 </div>
 
                 <div className="w-10 sm:w-20"></div>
-
               </div>
             </div>
           </div>
